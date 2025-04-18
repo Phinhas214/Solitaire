@@ -1,5 +1,6 @@
 
 require "vector"
+require "grabber"
 
 CardClass = {}
 CARD_STATE = {
@@ -21,7 +22,7 @@ function CardClass:new(xPos, yPos)
 end
 
 function CardClass:update()
-  
+  return
 end
 
 function CardClass:draw()
@@ -33,7 +34,7 @@ end
 
 function CardClass:checkForMouseOver(grabber)
   if self.state == CARD_STATE.GRABBED then
-    return 
+    return
   end
   
   local mousePos = grabber.currentMousePos
@@ -47,4 +48,20 @@ function CardClass:checkForMouseOver(grabber)
   self.state = isMouseOver and CARD_STATE.MOUSE_OVER or CARD_STATE.IDLE 
   
   
+end
+
+
+-- change card state if mouse is over card and is clicked
+function CardClass:isGrabbed(grabber) 
+  local grabbed = true
+  if self.state ~= CARD_STATE.MOUSE_OVER or grabber.grab ~= true then
+    return false
+  end
+  
+  
+  --if self.state == CARD_STATE.GRABBED then
+  -- self.position = Vector(grabber.currentMousePos.x, grabber.currentMousePos.y)
+  --end 
+  self.state = CARD_STATE.GRABBED
+  return grabbed
 end

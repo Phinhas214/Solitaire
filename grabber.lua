@@ -12,6 +12,7 @@ function GrabberClass:new()
   grabber.currentMousePos = nil
   
   grabber.grabPos = nil
+  grabber.grabbedCard = nil
   
   return grabber
 end
@@ -34,13 +35,13 @@ function GrabberClass:update()
 end
 
 function GrabberClass:grab()
-  
   self.grabPos = self.currentMousePos
   print("GRAB - " .. tostring(self.grabPos))
 end
 
 function GrabberClass:release()
   print("RELEASE")
+  self.previousMousePos = self.grabPos
   self.grabPos = nil
 end
 

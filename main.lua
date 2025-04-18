@@ -5,6 +5,7 @@ io.stdout:setvbuf("no")
 
 require "card"
 require "grabber"
+require "vector"
 
 function love.load() 
   love.window.setMode(960, 640)
@@ -14,17 +15,39 @@ function love.load()
   cardTable = {}
   
   table.insert(cardTable, CardClass:new(100, 100))
+  table.insert(cardTable, CardClass:new(200, 100))
 end
 
 
 function love.update()
   grabber:update()
-  
-  checkForMouseMoving()
+  -- if a card is grabbed move the card
+  if grabber.grabbedCard then
+      -- center the card
+      grabber.grabbedCard.position = Vector(
+        grabber.currentMousePos.x - grabber.grabbedCard.size.x/2, 
+        grabber.currentMousePos.y - grabber.grabbedCard.size.x/2
+      )
+  end
   
   for _, card in ipairs(cardTable) do 
-    card:update()
+    -- check mouse movement and update card state
+    local currentCard = checkForMouseMoving(card)
+    -- if clicked (grabPos is not nil) and we're hovering over card ----> change state and set grabbedCard
+    if grabber.grabPos and currentCard.state == CARD_STATE.MOUSE_OVER then
+      currentCard.state = CARD_STATE.GRABBED
+      grabber.grabbedCard = currentCard
+      
+    -- Relsease card when click is release
+    elseif not grabber.grabPos and grabber.grabbedCard then
+      grabber.grabbedCard.state = CARD_STATE.IDLE 
+      grabber.grabbedCard = nil
+    end
   end
+  
+  
+  
+
 end
 
 
@@ -39,12 +62,12 @@ function love.draw()
 end
 
 
-function checkForMouseMoving() 
+function checkForMouseMoving(card) 
   if grabber.currentMousePos == nil then
     return 
   end
+
+  card:checkForMouseOver(grabber)
   
-  for _, card in ipairs(cardTable) do 
-    card:checkForMouseOver(grabber)
-  end
+  return card
 end
