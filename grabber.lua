@@ -43,6 +43,7 @@ function GrabberClass:release()
   print("RELEASE")
   self.previousMousePos = self.grabPos
   self.grabPos = nil
+  -- self.grabbedCard = nil
 end
 
 

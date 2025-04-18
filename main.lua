@@ -14,40 +14,52 @@ function love.load()
   grabber = GrabberClass:new()
   cardTable = {}
   
-  table.insert(cardTable, CardClass:new(100, 100))
-  table.insert(cardTable, CardClass:new(200, 100))
+  -- draw pile 
+  for i = 80, 200, 120 do 
+    table.insert(cardTable, CardClass:new(i, 80))
+    -- table.insert(cardTable, CardClass:new(200, 100))
+  end
+  -- suit pile 
+  for i = 440, 900, 120 do 
+    table.insert(cardTable, CardClass:new(i, 80))
+    -- table.insert(cardTable, CardClass:new(200, 100))
+  end
+  -- tableau pile 
+  for i = 80, 900, 120 do 
+    table.insert(cardTable, CardClass:new(i, 300))
+    -- table.insert(cardTable, CardClass:new(200, 100))
+  end
+  
 end
 
 
 function love.update()
   grabber:update()
-  -- if a card is grabbed move the card
-  if grabber.grabbedCard then
+  
+  -- Relsease card when click is release
+  if not grabber.grabPos and grabber.grabbedCard then
+      grabber.grabbedCard.state = CARD_STATE.IDLE 
+      grabber.grabbedCard = nil 
+  -- if a card is grabbed move the card    
+  elseif grabber.grabbedCard then
       -- center the card
       grabber.grabbedCard.position = Vector(
         grabber.currentMousePos.x - grabber.grabbedCard.size.x/2, 
         grabber.currentMousePos.y - grabber.grabbedCard.size.x/2
       )
-  end
-  
-  for _, card in ipairs(cardTable) do 
-    -- check mouse movement and update card state
-    local currentCard = checkForMouseMoving(card)
-    -- if clicked (grabPos is not nil) and we're hovering over card ----> change state and set grabbedCard
-    if grabber.grabPos and currentCard.state == CARD_STATE.MOUSE_OVER then
-      currentCard.state = CARD_STATE.GRABBED
-      grabber.grabbedCard = currentCard
-      
-    -- Relsease card when click is release
-    elseif not grabber.grabPos and grabber.grabbedCard then
-      grabber.grabbedCard.state = CARD_STATE.IDLE 
-      grabber.grabbedCard = nil
+  -- else update card state    
+  else 
+    for _, card in ipairs(cardTable) do 
+      -- check mouse movement and update card state
+      checkForMouseMoving(card)
+      -- if clicked (grabPos is not nil) and we're hovering over card ----> change state and set grabbedCard
+      if grabber.grabPos and card.state == CARD_STATE.MOUSE_OVER then
+        card.state = CARD_STATE.GRABBED
+        grabber.grabbedCard = card
+      end
     end
+    
   end
-  
-  
-  
-
 end
 
 
@@ -71,3 +83,7 @@ function checkForMouseMoving(card)
   
   return card
 end
+
+
+
+

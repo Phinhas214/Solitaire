@@ -8,6 +8,10 @@ CARD_STATE = {
   MOUSE_OVER = 1,
   GRABBED = 2
 }
+CARD_ORIENTATION = {
+  FACE_UP = 0,
+  FACE_DOWN = 1
+}
 
 function CardClass:new(xPos, yPos)
   local card = {}
@@ -15,8 +19,9 @@ function CardClass:new(xPos, yPos)
   setmetatable(card, metadata)
   
   card.position = Vector(xPos, yPos)
-  card.size = Vector(50, 70)
+  card.size = Vector(80, 110)
   card.state = CARD_STATE.IDLE 
+  card.orient = CARD_ORIENTATION.FACE_DOWN
   
   return card
 end
@@ -27,8 +32,11 @@ end
 
 function CardClass:draw()
   love.graphics.setColor(1, 1, 1, 1)
-  love.graphics.rectangle("fill", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
-  
+  if self.orient == CARD_ORIENTATION.FACE_UP then
+    love.graphics.rectangle("fill", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
+  else
+    love.graphics.rectangle("line", self.position.x, self.position.y, self.size.x, self.size.y, 6, 6)
+  end
   love.graphics.print(tostring(self.state), self.position.x + 20, self.position.y - 20)
 end
 
@@ -51,17 +59,4 @@ function CardClass:checkForMouseOver(grabber)
 end
 
 
--- change card state if mouse is over card and is clicked
-function CardClass:isGrabbed(grabber) 
-  local grabbed = true
-  if self.state ~= CARD_STATE.MOUSE_OVER or grabber.grab ~= true then
-    return false
-  end
-  
-  
-  --if self.state == CARD_STATE.GRABBED then
-  -- self.position = Vector(grabber.currentMousePos.x, grabber.currentMousePos.y)
-  --end 
-  self.state = CARD_STATE.GRABBED
-  return grabbed
-end
+
