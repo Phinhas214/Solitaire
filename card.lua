@@ -59,4 +59,9 @@ function CardClass:checkForMouseOver(grabber)
 end
 
 
+function CardClass:setPosition(xPos, yPos)
+  self.position = Vector(xPos, yPos)
+end
+
+
 

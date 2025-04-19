@@ -6,6 +6,7 @@ io.stdout:setvbuf("no")
 require "card"
 require "grabber"
 require "vector"
+require "pile"
 
 function love.load() 
   love.window.setMode(960, 640)
@@ -13,22 +14,23 @@ function love.load()
   
   grabber = GrabberClass:new()
   cardTable = {}
+  piles = {}
   
-  -- draw pile 
-  for i = 80, 200, 120 do 
-    table.insert(cardTable, CardClass:new(i, 80))
-    -- table.insert(cardTable, CardClass:new(200, 100))
+  -- Tableau piles
+  for i = 0, 6 do 
+    local pile = PileClass:new(80 + (i * 120), 300, i)
+    table.insert(piles, pile)
   end
-  -- suit pile 
-  for i = 440, 900, 120 do 
-    table.insert(cardTable, CardClass:new(i, 80))
-    -- table.insert(cardTable, CardClass:new(200, 100))
+  
+  -- add cards to each pile
+  for i, pile in ipairs(piles) do 
+    for j = 1, i do 
+      local card = CardClass:new(0, 0) --will handle position in pile class
+      pile:push(card)
+    end
   end
-  -- tableau pile 
-  for i = 80, 900, 120 do 
-    table.insert(cardTable, CardClass:new(i, 300))
-    -- table.insert(cardTable, CardClass:new(200, 100))
-  end
+  
+  
   
 end
 
@@ -43,29 +45,34 @@ function love.update()
   -- if a card is grabbed move the card    
   elseif grabber.grabbedCard then
       -- center the card
-      grabber.grabbedCard.position = Vector(
-        grabber.currentMousePos.x - grabber.grabbedCard.size.x/2, 
-        grabber.currentMousePos.y - grabber.grabbedCard.size.x/2
-      )
+      local currXPos = grabber.currentMousePos.x - grabber.grabbedCard.size.x/2
+      local currYPos = grabber.currentMousePos.y - grabber.grabbedCard.size.y/2
+      grabber.grabbedCard:setPosition(currXPos, currYPos)
   -- else update card state    
   else 
-    for _, card in ipairs(cardTable) do 
-      -- check mouse movement and update card state
-      checkForMouseMoving(card)
-      -- if clicked (grabPos is not nil) and we're hovering over card ----> change state and set grabbedCard
-      if grabber.grabPos and card.state == CARD_STATE.MOUSE_OVER then
-        card.state = CARD_STATE.GRABBED
-        grabber.grabbedCard = card
+    for _, pile in ipairs(piles) do 
+      for _, card in ipairs(pile.pileList) do
+        -- check mouse movement and update card state
+        checkForMouseMoving(card)
+        -- if clicked (grabPos is not nil) and we're hovering over card 
+        -- change state and set grabbedCard
+        if grabber.grabPos and card.state == CARD_STATE.MOUSE_OVER then
+          card.state = CARD_STATE.GRABBED
+          grabber.grabbedCard = card
+        end
       end
+      
     end
-    
   end
 end
 
 
 function love.draw()
-  for _, card in ipairs(cardTable) do 
-    card:draw()
+--  for _, card in ipairs(cardTable) do 
+--    card:draw()
+--  end
+  for _, pile in ipairs(piles) do 
+    pile:draw()
   end
   
   love.graphics.setColor(1, 1, 1, 1)
