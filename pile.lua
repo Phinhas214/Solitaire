@@ -2,6 +2,8 @@
 require "card"
 
 PileClass = {}
+local CARD_WIDTH = 80
+local CARD_HEIGHT = 110
 
 function PileClass:new(xPos, yPos, pileNum) 
   local pile = {}
@@ -13,8 +15,8 @@ function PileClass:new(xPos, yPos, pileNum)
   pile.pileList = {}
   pile.x = xPos
   pile.y = yPos
-  pile.validWidth = nil
-  pile.validHeight = nil
+  pile.width = CARD_WIDTH
+  pile.height = CARD_HEIGHT
   
   return pile
 end
@@ -22,8 +24,6 @@ end
 function PileClass:push(card) 
   table.insert(self.pileList, card)
   self.topCard = card
-  self.validWidth = {self.topCard.position.x, self.topCard.position.x + self.topCard.size.x}
-  self.validheight = {self.topCard.position.y, self.topCard.position.y + self.topCard.size.y}
   
   local index = #self.pileList
   card:setPosition(self.x, self.y + (index * 20))
@@ -31,7 +31,8 @@ end
 
 function PileClass:pop(card)
   local removed = table.remove(self.pileList)
-  self.topCard = self.pileList[#pileList]
+  self.topCard = self.pileList[#self.pileList]
+  
   return removed
 end
 
@@ -41,20 +42,10 @@ function PileClass:draw()
   end
 end
 
+function PileClass:isMouseOver(mouseX, mouseY) 
+  return mouseX > self.x and mouseX < self.x + self.width and 
+         mouseY > self.y and mouseY < self.y + self.height
+end
 
 
----- draw pile 
---  for i = 80, 200, 120 do 
---    table.insert(cardTable, CardClass:new(i, 80))
---    -- table.insert(cardTable, CardClass:new(200, 100))
---  end
---  -- suit pile 
---  for i = 440, 900, 120 do 
---    table.insert(cardTable, CardClass:new(i, 80))
---    -- table.insert(cardTable, CardClass:new(200, 100))
---  end
---  -- tableau pile 
---  for i = 80, 900, 120 do 
---    table.insert(cardTable, CardClass:new(i, 300))
---    -- table.insert(cardTable, CardClass:new(200, 100))
---  end
+

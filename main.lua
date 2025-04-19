@@ -56,7 +56,9 @@ function love.update()
         checkForMouseMoving(card)
         -- if clicked (grabPos is not nil) and we're hovering over card 
         -- change state and set grabbedCard
-        if grabber.grabPos and card.state == CARD_STATE.MOUSE_OVER then
+        if grabber.grabPos and 
+        card.state == CARD_STATE.MOUSE_OVER and 
+        pile:isMouseOver(grabber.currentMousePos.x, grabber.currentMousePos.y) then 
           card.state = CARD_STATE.GRABBED
           grabber.grabbedCard = card
         end
