@@ -22,8 +22,15 @@ function PileClass:new(xPos, yPos, pileNum)
 end
 
 function PileClass:push(card) 
+  if #self.pileList > 0 then
+    local currentTop = self.pileList[#self.pileList]
+    currentTop.orient = CARD_ORIENTATION.FACE_DOWN
+  end
+  
+  
   table.insert(self.pileList, card)
   self.topCard = card
+  self.topCard.orient = CARD_ORIENTATION.FACE_UP
   
   local index = #self.pileList
   card:setPosition(self.x, self.y + (index * 20))
