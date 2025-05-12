@@ -1,5 +1,6 @@
 
 require "card"
+require "grabber"
 
 PileClass = {}
 local CARD_WIDTH = 80
@@ -47,6 +48,21 @@ function PileClass:draw()
   for _, card in ipairs(self.pileList) do 
     card:draw()
   end
+end
+
+function PileClass:update()
+  
+  for _, card in ipairs(self.pileList) do 
+      
+      if card.state == CARD_STATE.GRABBED and card == self.topCard then
+        local xPos = grabber.currentMousePos.x - 80
+        local yPos = grabber.currentMousePos.y - 110
+        card:setPosition(xPos, yPos)
+        print("set card position")
+      end
+  end
+  
+  
 end
 
 function PileClass:isMouseOver(mouseX, mouseY) 

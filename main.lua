@@ -50,11 +50,6 @@ function love.load()
   makeDeckPile()
   
   
-  
-
-  
-  
-  
 end
 
 
@@ -65,33 +60,28 @@ end
 function love.update()
   grabber:update()
   
-  -- Relsease card when click is release
-  if not grabber.grabPos and grabber.grabbedCard then
-      grabber.grabbedCard.state = CARD_STATE.IDLE 
-      grabber.grabbedCard = nil 
-  -- if a card is grabbed move the card    
-  elseif grabber.grabbedCard then
-      -- center the card
-      local currXPos = grabber.currentMousePos.x - grabber.grabbedCard.size.x/2
-      local currYPos = grabber.currentMousePos.y - grabber.grabbedCard.size.y/2
-      grabber.grabbedCard:setPosition(currXPos, currYPos)
-  -- else update card state    
-  else 
-    for _, pile in ipairs(piles) do 
-      for _, card in ipairs(pile.pileList) do
-        -- check mouse movement and update card state
-        checkForMouseMoving(card)
-        -- if clicked (grabPos is not nil) and we're hovering over card 
-        -- change state and set grabbedCard
-        if grabber.grabPos and card.state == CARD_STATE.MOUSE_OVER and card == pile.topCard then 
-          card.state = CARD_STATE.GRABBED
-          grabber.grabbedCard = card
-          break
-        end
-      end
-      
-    end
+  -- Collect and reverse-sort all piles first
+  local reversedPiles = {}
+  for i = #piles, 1, -1 do
+    table.insert(reversedPiles, piles[i])
   end
+
+  for _, pile in ipairs(reversedPiles) do
+    -- If pile.pileList is a dictionary
+    local keys = {}
+    for key in pairs(pile.pileList) do
+      table.insert(keys, key)
+    end
+    table.sort(keys, function(a, b) return a > b end)
+
+    for _, key in ipairs(keys) do
+      local card = pile.pileList[key]
+      checkForMouseMoving(card)
+      card:update()
+    end
+    pile:update()
+  end
+  
 end
 
 

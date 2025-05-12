@@ -1,5 +1,6 @@
 
 require "vector"
+--require "card"
 
 GrabberClass = {}
 
@@ -32,6 +33,8 @@ function GrabberClass:update()
     self:release()
   end
   
+--  moveGrabbedCard()
+  
 end
 
 function GrabberClass:grab()
@@ -43,8 +46,23 @@ function GrabberClass:release()
   print("RELEASE")
   self.previousMousePos = self.grabPos
   self.grabPos = nil
-  -- self.grabbedCard = nil
+  self.grabbedCard = nil
 end
+
+--function moveGrabbedCard()
+--  -- Relsease card when click is released
+--  if not grabber.grabPos and grabber.grabbedCard then
+    
+--    grabber.grabbedCard.state = CARD_STATE.IDLE 
+--    grabber.grabbedCard = nil 
+--  -- if a card is grabbed move the card    
+--  elseif grabber.grabbedCard then
+--    -- center the card
+--    local currXPos = grabber.currentMousePos.x - grabber.grabbedCard.size.x/2
+--    local currYPos = grabber.currentMousePos.y - grabber.grabbedCard.size.y/2
+--    grabber.grabbedCard:setPosition(currXPos, currYPos)
+--  end
+--end
 
 
 

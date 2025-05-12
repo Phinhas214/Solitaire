@@ -2,6 +2,7 @@
 require "vector"
 require "grabber"
 
+
 CardClass = {}
 CARD_STATE = {
   IDLE = 0,
@@ -29,8 +30,21 @@ function CardClass:new(xPos, yPos, value, suit)  -- value == num, suit == string
   return card
 end
 
+local grabBusy = false
 function CardClass:update()
-  return
+  
+  -- check if card is grabbed and set state
+  if self.state == CARD_STATE.MOUSE_OVER and love.mouse.isDown(1) and grabBusy == false then
+    self.state = CARD_STATE.GRABBED
+    grabBusy = true
+    print("card grabbed: " .. tostring(grabBusy))
+  end
+  
+  -- update state if card is released
+  if self.state == CARD_STATE.GRABBED and not love.mouse.isDown(1) then
+    self.state = CARD_STATE.MOUSE_OVER
+    grabBusy = false
+  end
 end
 
 function CardClass:draw()
